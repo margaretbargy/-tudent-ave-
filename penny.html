@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$tudent$ave$ – Student Spending Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Lilita+One&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#eaf5fc;--mist:#d6ebf8;--baby:#bfe0f5;--mid:#7fb8e0;--deep:#3b78b0;--navy:#1f3d5e;--ink:#35516f;--white:#fff;--line:#d3e7f5}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Plus Jakarta Sans","Segoe UI",system-ui,sans-serif;color:var(--ink);background:linear-gradient(180deg,var(--sky) 0,#fff 520px);line-height:1.6}
+.wrap{max-width:860px;margin:0 auto;padding:28px 20px 64px}
+header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px 0 8px}
+.brand{display:flex;align-items:center;gap:16px;margin-bottom:12px}.brand svg{flex:none}h1{font-family:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;font-weight:400;font-size:clamp(2.2rem,7vw,3.5rem);color:var(--deep);margin:0;letter-spacing:.01em;line-height:1;text-shadow:3px 3px 0 var(--baby);text-transform:none}h1 .d{color:var(--deep);text-shadow:1.5px 0 #fff,-1.5px 0 #fff,0 1.5px #fff,0 -1.5px #fff,1.1px 1.1px #fff,-1.1px 1.1px #fff,1.1px -1.1px #fff,-1.1px -1.1px #fff,3px 3px 0 var(--baby)}h2,h3,label,button,th,.hrow b,.stat b,.legend li,.rec a{text-transform:capitalize}#err{display:none;background:#eef2f6;border:1.5px solid #9fb3c8;color:var(--navy);border-radius:12px;padding:10px 14px;margin:18px 0 0;font-weight:500}.bad{border-color:var(--navy)!important;background:#eef2f6!important}
+h2{color:var(--navy);font-size:1.25rem;margin:0 0 4px;font-weight:700}
+p{margin:0 0 10px}
+.lead{max-width:46ch;font-size:1.05rem}
+.card{background:var(--white);border:1.5px solid var(--line);border-radius:22px;padding:26px;margin-top:20px}
+.sub{font-size:.92rem;color:#5b7894;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.full{grid-column:1/-1}
+label{display:block;font-weight:600;font-size:.9rem;color:var(--navy);margin-bottom:5px}
+input,select{width:100%;font:inherit;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:var(--sky);color:var(--navy)}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
+.money{position:relative}.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--deep);font-weight:700}
+.money input{padding-left:28px}
+button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:14px 30px;background:var(--deep);color:#fff;cursor:pointer;transition:background .2s}
+button:hover{background:var(--navy)}
+button.ghost{background:var(--mist);color:var(--navy)}button.ghost:hover{background:var(--baby)}
+.actions{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap}
+#results{display:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:14px}
+.stat{background:var(--sky);border-radius:16px;padding:14px 16px}
+.stat b{display:block;font-size:1.5rem;color:var(--navy);line-height:1.2}
+.stat small{color:#5b7894}
+.chart{display:flex;align-items:center;gap:28px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.legend{list-style:none;padding:0;margin:0;min-width:220px}
+.legend li{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.legend i{width:14px;height:14px;border-radius:50%;flex:none}
+.legend em{margin-left:auto;font-style:normal;font-weight:700;color:var(--navy)}
+.rec{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.rec:first-of-type{border-top:0}
+.rec svg{flex:none;width:44px;height:44px}
+.rec h3{margin:0 0 2px;font-size:1rem;color:var(--navy)}
+.rec ul{margin:6px 0 0;padding-left:18px}
+a{color:var(--deep);font-weight:600}
+.quote{background:linear-gradient(135deg,var(--baby),var(--mist));border:0;display:flex;gap:18px;align-items:center}
+.quote p{font-size:1.1rem;color:var(--navy);font-weight:500;margin:0}
+.goals{margin:8px 0 0;padding-left:18px}
+.note{font-size:.8rem;color:#6d86a0;margin-top:26px;text-align:center}
+.verdict{display:flex;gap:18px;align-items:center;border-radius:18px;padding:18px 20px;margin:14px 0 8px}
+.verdict.up{background:linear-gradient(135deg,var(--baby),var(--mist))}
+.verdict.down{background:linear-gradient(135deg,#d3dbe3,#eef2f6)}
+.verdict h3{font-size:1.15rem;margin:0 0 4px;color:var(--navy)}.verdict p{margin:0}.verdict svg{flex:none}
+.chk{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.chk div{flex:1}.chk select{width:auto}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.92rem}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}th{color:var(--navy);font-weight:700}td svg{vertical-align:middle}
+.hrow{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}.hrow span{margin-left:auto;font-weight:700;color:var(--navy)}
+.gs{margin-top:22px;display:none}.gs h2{margin-bottom:2px}
+.welcome{display:none;background:var(--sky);border-radius:16px;padding:14px 18px;margin-bottom:20px}
+button.link{background:none;color:var(--deep);padding:14px 6px;text-decoration:underline}button.link:hover{background:none;color:var(--navy)}
+input[readonly]{background:#eef2f6;color:var(--ink)}
+@media print{.noprint,#form,#go{display:none!important}body{background:#fff}.card{break-inside:avoid}}
+@media(max-width:640px){header{flex-direction:column-reverse;align-items:flex-start}.grid{grid-template-columns:1fr}.card{padding:20px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="brand"><svg width="84" height="84" viewBox="0 0 100 100" role="img" aria-label="$tudent$ave$ logo: a dollar coin on a textbook inside a circle"><circle cx="50" cy="50" r="46" fill="#eaf5fc" stroke="#3b78b0" stroke-width="5"/><rect x="29" y="70" width="46" height="6" rx="2" fill="#fff" stroke="#bfe0f5" stroke-width="2"/><rect x="24" y="28" width="50" height="44" rx="5" fill="#3b78b0"/><rect x="24" y="28" width="9" height="44" rx="3" fill="#1f3d5e"/><circle cx="54" cy="48" r="15" fill="#fff" stroke="#bfe0f5" stroke-width="3"/><text x="54" y="55" text-anchor="middle" font-size="21" font-weight="800" fill="#3b78b0" font-family="sans-serif">$</text></svg><h1><span class="d">$</span>tudent<span class="d">$</span>ave<span class="d">$</span></h1></div>
+    <p class="lead">Log your monthly spending, see where it goes, and get simple steps to make your money go further.</p>
+  </div>
+  
+</header>
+
+<form id="form" class="card" autocomplete="off" novalidate>
+  <div class="welcome" id="welcome"></div>
+  <h2>About you</h2>
+  <p class="sub">This stays in your browser. Nothing is sent anywhere.</p>
+  <div class="grid">
+    <div><label for="name">Name</label><input id="name" maxlength="40"></div>
+    <div><label for="college">College</label><input id="college" maxlength="80" placeholder="e.g. Emory University"></div>
+    <div><label for="year">Year In College</label>
+      <select id="year"><option value="">Choose one</option><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option><option>Graduate student</option></select></div>
+    <div><label for="source">Source Of Income (Optional)</label><input id="source" maxlength="60" placeholder="e.g. part-time job, family support"></div>
+    <div class="full"><label for="income">Monthly Income (Optional)</label><div class="money"><span>$</span><input id="income" type="number" min="0" step="any" inputmode="decimal"></div></div>
+  </div>
+
+  <h2 style="margin-top:28px">Your 3 personal finance goals</h2>
+  <div class="grid" style="margin-top:12px">
+    <div class="full"><input id="g1" maxlength="100" aria-label="Goal 1" placeholder="Goal 1: e.g. Save $1,000 emergency fund"></div>
+    <div class="full"><input id="g2" maxlength="100" aria-label="Goal 2" placeholder="Goal 2: e.g. Stop overdrafting my account"></div>
+    <div class="full"><input id="g3" maxlength="100" aria-label="Goal 3" placeholder="Goal 3: e.g. Start investing after graduation"></div>
+  </div>
+  <div class="gs" id="gs"></div>
+
+  <h2 style="margin-top:28px">Average monthly spending</h2>
+  <p class="sub">Estimate what you spend in a typical month. Use 0 if a category doesn't apply.</p>
+  <div class="grid" id="spend"></div>
+
+  <p id="err" role="alert"></p><div class="actions"><button type="button" id="go">Build My Report</button><button type="button" class="link" id="newp" style="display:none">Start A New Profile</button></div>
+</form>
+
+<main id="results" aria-live="polite">
+  <section class="card">
+    <h2 id="hello"></h2>
+    <div class="stats" id="stats"></div>
+    <ul class="goals" id="goals" aria-label="Your goals"></ul>
+  </section>
+  <section class="card" id="prog" style="display:none"></section>
+
+  <section class="card">
+    <h2>Where your money goes</h2>
+    <div class="chart"><div id="pie"></div><ul class="legend" id="legend"></ul></div>
+  </section>
+
+  <section class="card">
+    <h2>3 ways to improve your spending</h2>
+    <div id="recs"></div>
+  </section>
+
+  <section class="card quote">
+    <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28" fill="#fff" stroke="#7fb8e0" stroke-width="4"/><path d="M18 42l10-10 7 7 12-15" fill="none" stroke="#3b78b0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <p id="motivate"></p>
+  </section>
+
+  <section class="card">
+    <h2>3 pieces of advice for your future</h2>
+    <div id="future"></div>
+  </section>
+
+  <section class="card noprint" id="hist" style="display:none"></section>
+  <p id="msg" class="sub noprint" role="status" style="margin:18px 0 0"></p>
+  <div class="actions noprint"><button type="button" id="save">Save This Report</button><button class="ghost" type="button" id="print">Print Or Save As PDF</button><button class="ghost" id="reset" type="button">Start Over</button></div>
+  <p class="note">Penny Pal is for education only and isn't professional financial advice. Always check current prices, rates, and account terms yourself.</p>
+</main>
+</div>
+
+<script>
+const CATS=[
+ {k:'transport',n:'Transportation',c:'#5a9bd0'},
+ {k:'food',n:'Food',c:'#8cc4ea'},
+ {k:'clothes',n:'Clothes',c:'#b9d9f2'},
+ {k:'books',n:'Textbooks',c:'#3b78b0'},
+ {k:'out',n:'Going Out',c:'#a8b8c8'},
+ {k:'other',n:'Other',c:'#d3dbe3'}];
+const $=id=>document.getElementById(id);
+const usd=n=>'$'+Number(n).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});
+const esc=s=>String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+$('spend').innerHTML=CATS.map(c=>`<div><label for="s_${c.k}">${c.n}</label><div class="money"><span>$</span><input id="s_${c.k}" type="number" min="0" step="any" inputmode="decimal" value="0"></div></div>`).join('');
+
+const icon=(p)=>`<svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="21" fill="#eaf5fc" stroke="#bfe0f5" stroke-width="2"/>${p}</svg>`;
+const ICONS={
+ transport:icon('<rect x="10" y="17" width="24" height="12" rx="5" fill="#7fb8e0"/><rect x="14" y="13" width="14" height="8" rx="3" fill="#bfe0f5"/><circle cx="16" cy="30" r="4" fill="#1f3d5e"/><circle cx="29" cy="30" r="4" fill="#1f3d5e"/>'),
+ food:icon('<path d="M12 22h20a10 10 0 0 1-20 0z" fill="#7fb8e0"/><path d="M16 18c0-4 4-4 4-8M24 18c0-4 4-4 4-8" stroke="#3b78b0" stroke-width="2.5" fill="none" stroke-linecap="round"/>'),
+ clothes:icon('<path d="M15 11l7 4 7-4 8 7-5 4-3-2v14H15V20l-3 2-5-4z" fill="#7fb8e0" transform="translate(-1 -1) scale(.98)"/>'),
+ books:icon('<rect x="11" y="12" width="22" height="21" rx="3" fill="#3b78b0"/><rect x="15" y="12" width="2.5" height="21" fill="#bfe0f5"/><rect x="21" y="18" width="8" height="2.5" rx="1" fill="#eaf5fc"/>'),
+ out:icon('<path d="M22 9l3 8 8 1-6 6 2 9-7-5-7 5 2-9-6-6 8-1z" fill="#a8b8c8"/>'),
+ other:icon('<rect x="10" y="14" width="24" height="17" rx="4" fill="#7fb8e0"/><circle cx="22" cy="22.5" r="4" fill="#eaf5fc"/>'),
+ save:icon('<circle cx="22" cy="22" r="11" fill="#d6ebf8" stroke="#7fb8e0" stroke-width="2"/><text x="22" y="27" text-anchor="middle" font-size="14" font-weight="800" fill="#3b78b0" font-family="sans-serif">$</text>'),
+ grow:icon('<path d="M10 31l8-9 6 5 10-13" fill="none" stroke="#3b78b0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 14h6v6" fill="none" stroke="#3b78b0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>'),
+ card:icon('<rect x="9" y="13" width="26" height="18" rx="4" fill="#7fb8e0"/><rect x="9" y="17" width="26" height="4" fill="#1f3d5e"/><rect x="13" y="25" width="8" height="3" rx="1.5" fill="#eaf5fc"/>')
+};
+
+function link(u,t){return `<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`}
+
+function recFor(k,amt,pct,college){
+  const lead=`You spend ${usd(amt)}/month here (${pct}% of your total). `;
+  const maps='https://www.google.com/maps/search/'+encodeURIComponent('thrift stores near '+college);
+  const R={
+   transport:['Lower your transportation costs',lead+'Small changes add up fast.',['Ask your school or local transit agency about a student pass or free student fare.','Walk or bike short trips, and split rides with friends when you do need a car.','Compare the monthly cost of rideshares to a pass before your next semester.']],
+   food:['Trim your food spending',lead+'Food is the easiest category to save on without feeling it.',['Meal prep 3 to 4 dinners on Sunday; groceries cost far less per meal than takeout.','Use every dining-hall swipe you already paid for before spending cash.','Try '+link('https://www.toogoodtogo.com','Too Good To Go')+' for discounted surplus food, and check student discounts at your favorite spots.']],
+   clothes:['Shop clothes for less',lead+'Secondhand and student discounts stretch a clothing budget a lot.',[link(maps,'Find thrift stores near '+esc(college))+' (opens a map search).','Browse '+link('https://www.thredup.com','ThredUp')+', '+link('https://poshmark.com','Poshmark')+', and '+link('https://www.depop.com','Depop')+' for secondhand pieces.','Sign up for student discounts through '+link('https://www.unidays.com','UNiDAYS')+' or '+link('https://www.studentbeans.com','Student Beans')+', and wait 48 hours before any non-essential purchase.']],
+   books:['Cut your textbook costs',lead+'You rarely need to buy new.',['Search free open textbooks at '+link('https://openstax.org','OpenStax')+' and the '+link('https://open.umn.edu/opentextbooks','Open Textbook Library')+'.','Borrow digital copies from the '+link('https://archive.org','Internet Archive')+' and check your campus library for course reserves.','Email your professor to ask whether an older edition works, and rent instead of buying when you must.']],
+   out:['Keep going out fun and affordable',lead+'You can protect your social life and your budget at once.',['Set a weekly cap in cash or a separate debit card, and stop when it runs out.','Look for free campus events, student-night deals, and group activities like game nights or hikes.','Eat before you go out so you only pay for the fun part.']],
+   other:['Find the leaks in "Other"',lead+'Miscellaneous spending often hides things you forgot about.',['Write down every "other" purchase for 30 days to see what it really is.','Cancel unused subscriptions, or share plans with friends where the terms allow it.','Look for student pricing on services you do use, such as music, software, and cloud storage.']]
+  };
+  const r=R[k];return {i:ICONS[k],t:r[0],d:r[1],l:r[2]};
+}
+
+const FILL=[
+ {i:ICONS.save,t:'Pay yourself first',d:'Set up an automatic transfer to savings right after each payday, even if it is only $10 to $25.',l:[]},
+ {i:ICONS.card,t:'Try the 50/30/20 guide',d:'Aim for about 50% of income on needs, 30% on wants, and 20% on savings and debt payments. Adjust it to fit your life.',l:[]},
+ {i:ICONS.other,t:'Review weekly',d:'Spend 10 minutes each week checking your account. Catching small problems early is the best habit in personal finance.',l:[]}];
+
+const FUTURE=[
+ {i:ICONS.save,t:'Build an emergency fund',d:'Work toward $500 to $1,000 first, then 3 to 6 months of essential expenses. Keep it in a high-yield savings account (online banks often pay much more interest than traditional savings).'},
+ {i:ICONS.grow,t:'Start investing early',d:'Time is your biggest advantage thanks to compound growth. Once you have income, look into a Roth IRA and low-cost, diversified index funds, and always take any employer retirement match.'},
+ {i:ICONS.card,t:'Build credit responsibly',d:'Pay your full statement balance on time every month, keep card use low relative to your limit, and never carry a balance at high interest. Good credit lowers the cost of renting, car loans, and mortgages later.'}];
+
+const MOTIVATE=[
+ 'Financial literacy is a skill, not a talent. Every dollar you track today builds the confidence to make bigger decisions tomorrow.',
+ 'You do not need a big income to build good habits. You need awareness, a plan, and the patience to repeat it. You just took the first step.',
+ 'The students who thrive with money are not the ones who earn the most. They are the ones who pay attention. You are paying attention.'];
+
+function pie(data,total){
+  const R=90,r=54,cx=110,cy=110;let a=-Math.PI/2,out='';
+  const pt=(rad,ang)=>[cx+rad*Math.cos(ang),cy+rad*Math.sin(ang)];
+  const nz=data.filter(d=>d.v>0);
+  if(nz.length===1){out=`<circle cx="${cx}" cy="${cy}" r="${(R+r)/2}" fill="none" stroke="${nz[0].c}" stroke-width="${R-r}"/>`}
+  else nz.forEach(d=>{
+    const s=d.v/total*Math.PI*2,e=a+s,big=s>Math.PI?1:0;
+    const [x1,y1]=pt(R,a),[x2,y2]=pt(R,e),[x3,y3]=pt(r,e),[x4,y4]=pt(r,a);
+    out+=`<path d="M${x1} ${y1}A${R} ${R} 0 ${big} 1 ${x2} ${y2}L${x3} ${y3}A${r} ${r} 0 ${big} 0 ${x4} ${y4}Z" fill="${d.c}" stroke="#fff" stroke-width="3"><title>${d.n}: ${usd(d.v)}</title></path>`;
+    a=e;});
+  return `<svg width="220" height="220" viewBox="0 0 220 220" role="img" aria-label="Pie chart of monthly spending by category">${out}<text x="110" y="106" text-anchor="middle" font-size="12" fill="#5b7894" font-family="sans-serif">per month</text><text x="110" y="130" text-anchor="middle" font-size="22" font-weight="800" fill="#1f3d5e" font-family="sans-serif">${usd(total)}</text></svg>`;
+}
+
+const card=x=>`<div class="rec">${x.i}<div><h3>${x.t}</h3><p style="margin:0">${x.d}</p>${x.l&&x.l.length?'<ul>'+x.l.map(l=>`<li>${l}</li>`).join('')+'</ul>':''}</div></div>`;
+
+const KEY='studentsave_v1';
+let DB={profile:null,entries:[]},LAST=null;
+try{const r=JSON.parse(localStorage.getItem(KEY));if(r&&r.profile&&Array.isArray(r.entries))DB=r}catch(e){}
+const persist=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB));return true}catch(e){return false}};
+const NOW=new Date(),MK=NOW.getFullYear()+'-'+String(NOW.getMonth()+1).padStart(2,'0');
+const lbl=k=>{const p=k.split('-');return new Date(+p[0],+p[1]-1,1).toLocaleString(undefined,{month:'long',year:'numeric'})};
+const ML=lbl(MK);
+const arrow=up=>`<svg width="26" height="26" viewBox="0 0 26 26" role="img" aria-label="${up?'Improving':'Needs work'}"><circle cx="13" cy="13" r="12" fill="${up?'#3b78b0':'#7f93a8'}"/><path d="${up?'M13 19V8M8 12l5-5 5 5':'M13 7v11M8 14l5 5 5-5'}" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const NEUTRAL='<svg width="26" height="26" viewBox="0 0 26 26" role="img" aria-label="First report"><circle cx="13" cy="13" r="12" fill="#d3dbe3"/><path d="M8 13h10" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const FACE_UP='<svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Happy face"><circle cx="36" cy="36" r="30" fill="#fff" stroke="#3b78b0" stroke-width="4"/><circle cx="26" cy="30" r="3.5" fill="#1f3d5e"/><circle cx="46" cy="30" r="3.5" fill="#1f3d5e"/><path d="M23 41c3 9 23 9 26 0" fill="none" stroke="#1f3d5e" stroke-width="4" stroke-linecap="round"/><path d="M62 6v10M57 11h10M8 54v8M4 58h8" stroke="#7fb8e0" stroke-width="3" stroke-linecap="round"/></svg>';
+const FACE_DOWN='<svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Sad face"><circle cx="36" cy="36" r="30" fill="#fff" stroke="#7f93a8" stroke-width="4"/><circle cx="26" cy="30" r="3.5" fill="#35516f"/><circle cx="46" cy="30" r="3.5" fill="#35516f"/><path d="M24 50c3-8 21-8 24 0" fill="none" stroke="#35516f" stroke-width="4" stroke-linecap="round"/><path d="M26 37c-3 5-3 8 0 8s3-3 0-8z" fill="#7fb8e0"/></svg>';
+
+function renderProg(spend,total,goalsOk,goals){
+  const el=$('prog'),prev=DB.entries.filter(e=>e.k!==MK).slice(-1)[0];
+  if(!DB.profile||!prev||!goalsOk){el.style.display='none';return null}
+  const diff=total-prev.total,pct=prev.total?Math.round(Math.abs(diff)/prev.total*100):0,pl=lbl(prev.k);
+  const sUp=diff<0,ok=goalsOk.filter(Boolean).length,gUp=ok>=2,up=sUp&&gUp;
+  const sTxt=diff<0?`Spending is down ${usd(-diff)} (${pct}%) from ${pl}`:diff>0?`Spending is up ${usd(diff)} (${pct}%) from ${pl}`:`Spending matched ${pl}`;
+  const txt=up?`You spent ${usd(-diff)} less than in ${pl}, and ${ok} of 3 goals are on track. Keep it going!`
+   :(sUp?`Your spending is down ${usd(-diff)} from ${pl}, which is great.`:`Your spending ${diff>0?'rose by '+usd(diff):'did not drop'} compared with ${pl}.`)+(gUp?'':` Only ${ok} of 3 goals are on track.`)+' Pick one category below to trim next month. Small changes still count.';
+  const rows=CATS.map(c=>{const a=prev.spend[c.k]||0,b=spend[c.k]||0,d=b-a;return `<tr><td>${c.n}</td><td>${usd(a)}</td><td>${usd(b)}</td><td>${d===0?'No Change':(d<0?'-':'+')+usd(Math.abs(d))}</td><td>${d===0?'':arrow(d<0)}</td></tr>`}).join('');
+  el.innerHTML=`<h2>Your Monthly Progress</h2>
+  <div class="verdict ${up?'up':'down'}">${up?FACE_UP:FACE_DOWN}<div><h3>${up?'Great Progress!':'Time To Regroup'}</h3><p>${txt}</p></div></div>
+  <div class="chk">${arrow(sUp)}<div>${sTxt}</div></div>
+  ${goals.map((g,i)=>`<div class="chk">${arrow(goalsOk[i])}<div>${esc(g)}</div></div>`).join('')}
+  <div class="tw"><table><thead><tr><th>Category</th><th>${pl}</th><th>${ML}</th><th>Change</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="sub" style="margin:12px 0 0">Up arrow = improving or on track. Down arrow = needs work.</p>`;
+  el.style.display='block';
+  return up;
+}
+function renderHist(){
+  const el=$('hist');
+  if(!DB.entries.length){el.style.display='none';return}
+  el.innerHTML='<h2>Your Saved Reports</h2><p class="sub">Stored in this browser on this device.</p>'+DB.entries.slice().reverse().map(e=>`<div class="hrow">${e.v===null||e.v===undefined?NEUTRAL:arrow(e.v)}<b>${lbl(e.k)}</b>${e.v===null||e.v===undefined?'<small>(first report)</small>':''}<span>${usd(e.total)}</span></div>`).join('');
+  el.style.display='block';
+}
+function mode(){
+  const p=DB.profile,ci=!!p;
+  $('welcome').style.display=ci?'block':'none';
+  $('gs').style.display=ci?'block':'none';
+  $('newp').style.display=ci?'inline-block':'none';
+  if(!ci)return;
+  $('welcome').innerHTML=`<b>Welcome Back, ${esc(p.name)}!</b><br>Enter your average spending for ${ML}, mark how each goal is going, and build your report to see your progress.`;
+  $('name').value=p.name||'';$('college').value=p.college||'';$('year').value=p.year||'';$('source').value=p.source||'';$('income').value=p.income||'';
+  ['g1','g2','g3'].forEach((g,i)=>{$(g).value=p.goals[i];$(g).readOnly=true});
+  $('gs').innerHTML='<h2>How Are Your Goals Going?</h2><p class="sub">Your initial goals are locked in so your progress stays comparable.</p>'+p.goals.map((g,i)=>`<div class="chk"><div>${esc(g)}</div><select id="gk${i}" aria-label="Status for goal ${i+1}"><option value="1">On Track</option><option value="0">Not On Track</option></select></div>`).join('');
+}
+function validate(){
+  document.querySelectorAll('.bad').forEach(x=>x.classList.remove('bad'));
+  const miss=[];
+  [['name','Name'],['college','College'],['year','Year In College'],['g1','Goal 1'],['g2','Goal 2'],['g3','Goal 3']].forEach(([id,l])=>{if(!$(id).value.trim()){$(id).classList.add('bad');miss.push(l)}});
+  const err=$('err');
+  if(miss.length){err.textContent='Please Fill In: '+miss.join(', ')+'.';err.style.display='block';document.querySelector('.bad').focus();return false}
+  err.style.display='none';return true;
+}
+function build(){
+  if(!validate())return;
+  const college=$('college').value.trim();
+  const data=CATS.map(c=>({...c,v:Math.max(0,parseFloat($('s_'+c.k).value)||0)}));
+  const total=data.reduce((s,d)=>s+d.v,0);
+  const income=parseFloat($('income').value)||0;
+  if(total<=0){$('err').textContent='Enter At Least One Spending Amount Above $0.';$('err').style.display='block';return}
+
+  $('hello').textContent=`${$('name').value.trim()}, here is your monthly report`;
+  const top=[...data].sort((a,b)=>b.v-a.v)[0];
+  let s=`<div class="stat"><b>${usd(total)}</b><small>average monthly spending</small></div>
+         <div class="stat"><b>${usd(total*12)}</b><small>projected over 12 months</small></div>
+         <div class="stat"><b>${top.n}</b><small>biggest category (${Math.round(top.v/total*100)}%)</small></div>`;
+  if(income>0){
+    const left=income-total;
+    s+=`<div class="stat"><b>${left>=0?usd(left):'-'+usd(-left)}</b><small>${left>=0?'left over each month':'over budget each month'}${$('source').value.trim()?' ('+esc($('source').value.trim())+')':''}</small></div>
+        <div class="stat"><b>${Math.round(left/income*100)}%</b><small>of income ${left>=0?'saved':'in the red'} (aim for 20%)</small></div>`;
+  }
+  $('stats').innerHTML=s;
+  $('goals').innerHTML=['g1','g2','g3'].map(g=>`<li>${esc($(g).value.trim())}</li>`).join('');
+  $('goals').insertAdjacentHTML('afterbegin','');
+  $('pie').innerHTML=pie(data,total);
+  $('legend').innerHTML=data.map(d=>`<li><i style="background:${d.c}"></i>${d.n}<em>${usd(d.v)} · ${Math.round(d.v/total*100)}%</em></li>`).join('');
+
+  const ranked=data.filter(d=>d.v>0).sort((a,b)=>b.v-a.v).slice(0,3).map(d=>{const r=recFor(d.k,d.v,Math.round(d.v/total*100),college);return {i:r.i,t:r.t,d:r.d,l:r.l}});
+  let f=0;while(ranked.length<3)ranked.push(FILL[f++]);
+  $('recs').innerHTML=ranked.map(card).join('');
+  $('motivate').textContent=MOTIVATE[Math.floor(Math.random()*MOTIVATE.length)];
+  $('future').innerHTML=FUTURE.map(card).join('');
+
+  const goals=['g1','g2','g3'].map(g=>$(g).value.trim());
+  const spend={};data.forEach(d=>spend[d.k]=d.v);
+  const goalsOk=DB.profile?[0,1,2].map(i=>$('gk'+i).value==='1'):null;
+  const v=renderProg(spend,total,goalsOk,goals);
+  LAST={spend,total,goalsOk,v,form:{name:$('name').value.trim(),college,year:$('year').value,source:$('source').value.trim(),income,goals}};
+  $('msg').textContent='';
+  renderHist();
+  $('form').style.display='none';
+  $('results').style.display='block';
+  $('hello').scrollIntoView();
+}
+$('go').addEventListener('click',()=>{try{build()}catch(x){$('err').textContent='Something Went Wrong: '+x.message;$('err').style.display='block'}});
+$('form').addEventListener('submit',e=>e.preventDefault());
+$('form').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'){e.preventDefault();$('go').click()}});
+$('save').addEventListener('click',()=>{
+  if(!LAST)return;const f=LAST.form;
+  if(!DB.profile)DB.profile={goals:f.goals};
+  Object.assign(DB.profile,{name:f.name,college:f.college,year:f.year,source:f.source,income:f.income});
+  DB.entries=DB.entries.filter(x=>x.k!==MK).concat({k:MK,spend:LAST.spend,total:LAST.total,income:f.income,goalsOk:LAST.goalsOk,v:LAST.v}).sort((a,b)=>a.k<b.k?-1:1);
+  $('msg').textContent=persist()?`Saved For ${ML}. Next month, open this file again and log a new month to see your progress.`:'Your browser blocked saving here. Use Print Or Save As PDF to keep this report.';
+  renderHist();
+});
+$('print').addEventListener('click',()=>window.print());
+$('newp').addEventListener('click',()=>{if(confirm('This will delete your saved reports on this device. Continue?')){DB={profile:null,entries:[]};persist();location.reload()}});
+mode();
+$('reset').addEventListener('click',()=>{
+  $('results').style.display='none';$('form').style.display='block';mode();window.scrollTo(0,0);
+});
+</script>
+</body>
+</html>
